@@ -1,1 +1,40 @@
-javascript:(async function(){try{const text=await navigator.clipboard.readText();if(!text){alert("Clipboard empty.");return;}const data=JSON.parse(text);let updated=0;Object.keys(data).forEach(k=>{const el=document.querySelector('[data-test-selector="'+k+'"]');if(!el)return;/* Handle TinyMCE */if(el.classList.contains("mceEditor")&&typeof tinymce!=="undefined"){const editor=tinymce.get(el.id);if(editor){editor.setContent(data[k].value||"");editor.save();updated++;return;}}/* Handle checkbox */if(el.type==="checkbox"){el.checked=data[k].value;}else{el.value=data[k].value;}el.dispatchEvent(new Event("input",{bubbles:true}));el.dispatchEvent(new Event("change",{bubbles:true}));el.style.outline="2px solid lime";updated++;});alert("Imported "+updated+" fields successfully.");}catch(e){alert("Clipboard read failed. Click page once and retry.");}})();
+javascript: (async function() {
+    try {
+        const text = await navigator.clipboard.readText();
+        if (!text) {
+            alert("Clipboard empty.");
+            return;
+        }
+        const data = JSON.parse(text);
+        let updated = 0;
+        Object.keys(data).forEach(k => {
+            const el = document.querySelector('[data-test-selector="' + k + '"]');
+            if (!el) return; /* Handle TinyMCE */
+            if (el.classList.contains("mceEditor") && typeof tinymce !== "undefined") {
+                const editor = tinymce.get(el.id);
+                if (editor) {
+                    editor.setContent(data[k].value || "");
+                    editor.save();
+                    updated++;
+                    return;
+                }
+            } /* Handle checkbox */
+            if (el.type === "checkbox") {
+                el.checked = data[k].value;
+            } else {
+                el.value = data[k].value;
+            }
+            el.dispatchEvent(new Event("input", {
+                bubbles: true
+            }));
+            el.dispatchEvent(new Event("change", {
+                bubbles: true
+            }));
+            el.style.outline = "2px solid lime";
+            updated++;
+        });
+        alert("Imported " + updated + " fields successfully.");
+    } catch (e) {
+        alert("Clipboard read failed. Click page once and retry.");
+    }
+})();
